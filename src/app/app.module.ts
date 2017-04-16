@@ -1,17 +1,19 @@
-import { NavigatorService } from './navigator.service';
-import { TeamService } from './team.service';
-import { UserPanelComponent } from './user-panel.component';
+import { NavigatorService } from './services/navigator.service';
+import { TeamService } from './services/team.service';
+import { MapComponent } from './components/map.component';
+import { UserPanelComponent } from './components/user-panel.component';
+import { AppComponent } from './components/app.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { AngularFireModule } from 'angularfire2';
-import { AppComponent } from './app.component';
-import { MapComponent } from './map/map.component';
-//import { AgmCoreModule } from 'angular2-google-maps/core';
+import { AgmCoreModule } from 'angular2-google-maps/core';
+import { CommonModule } from "@angular/common";
 
 
-  var firebaseConfig = {
+var firebaseConfig =
+  {
     apiKey: "AIzaSyC7BWOUfEaKxVvBGSJ-zWILP_mM1EbIPqI",
     authDomain: "multi-tracker-1490724017959.firebaseapp.com",
     databaseURL: "https://multi-tracker-1490724017959.firebaseio.com",
@@ -26,16 +28,19 @@ import { MapComponent } from './map/map.component';
     MapComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     FormsModule,
     HttpModule,
     AngularFireModule.initializeApp(firebaseConfig),
-    // AgmCoreModule.forRoot({
-    //   apiKey: 'AIzaSyB8UcN2A2wrWfea6zZUQhRrDkDT92ugBMc'
-    // })
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyB8UcN2A2wrWfea6zZUQhRrDkDT92ugBMc'
+    })
   ],
-  providers: [TeamService,
-  NavigatorService],
+  providers: [
+    TeamService,
+    NavigatorService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

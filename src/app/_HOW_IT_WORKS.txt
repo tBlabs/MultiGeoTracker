@@ -1,0 +1,8 @@
+# Program flow
+
+- Components comunicate throug team.service
+
+
+# Deploy
+
+- SSL is required to let browser navigation functions work

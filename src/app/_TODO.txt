@@ -1,1 +1,6 @@
 GARBAGE COLLECTOR
+    Jeśli ktoś nie kliknie Detach to jego wpis pozostanie w bazie na zawsze
+
+
+HIDE FIREBASE KEYS
+    app.module.ts zawiera klucze które trzeba ukryć

@@ -1,24 +1,9 @@
-import { TeamService } from './team.service';
+import { TeamService } from './../services/team.service';
 import { TestBed } from '@angular/core/testing';
 import { Component, Output, EventEmitter } from '@angular/core';
-//import { FirebaseRef, AngularFire, FirebaseListObservable, FirebaseObjectObservable } from "angularfire2";
 import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
 
-import 'rxjs';
-import 'rxjs/add/operator/debounceTime';
-import { Subscription } from "rxjs";
-
-// class User
-// {
-//   name: string;
-//   team: string;
-// }
-// class DbItem
-// {
-//   user: User;
-//   geoLocation: Geolocation;
-// }
 
 class DbItem
 {
@@ -33,22 +18,38 @@ enum FormState
 
 @Component({
     selector: 'user-panel',
-    template: `<input type="text" #team value="TEAM-A" [disabled]="teamInputDisable" placeholder="Team">
-            <input type="text" #me value="Me" [disabled]="userInputDisable" [class.busy]="userInputError" placeholder="Your name">
-         
-             <button *ngIf="joinButtonVisable" (click)="TryJoin(team.value, me.value)">{{ joinButtonText }}</button>
-             <button *ngIf="!joinButtonVisable" (click)="Detach()">{{ detachButtonText }}</button>
+    template: `
+   
+       <input type="text" #team 
+              value="Team" 
+              [disabled]="teamInputDisable" 
+              placeholder="Team name">
 
-             <button (click)="_team.Test()">Update</button>
+       <input type="text" #me 
+              value="Me" 
+              [disabled]="userInputDisable" 
+              [class.err]="userInputError" 
+              placeholder="Your initials" 
+              maxlength="2">
+         
+       <button *ngIf="joinButtonVisable" 
+               (click)="TryJoin(team.value, me.value)">
+               {{ joinButtonText }}
+       </button>
+       <button *ngIf="!joinButtonVisable" 
+               (click)="Detach()">
+               {{ detachButtonText }}
+       </button>
+
     `,
-    styles: ['.busy { border-color:  red }']
+    styles: 
+    [`
+        .err { border: 1px solid red }    
+        input { width: 80px }
+    `]
 })
 export class UserPanelComponent
 {
-    @Output() teamChange = new EventEmitter<string>();
-
-    private team: string = "";
-    
     teamInputDisable = false;
     userInputDisable = false;
     userInputError = false;
@@ -56,11 +57,12 @@ export class UserPanelComponent
     private joinButtonText: string = "Join";
     private detachButtonText: string = "Detach";
 
+
     constructor(private _team: TeamService)
     {
         this.SetFormState(FormState.Initial);
     }
-     
+
     private SetFormState(state: FormState): void
     {
         this.teamInputDisable = false;
@@ -72,6 +74,7 @@ export class UserPanelComponent
 
         switch (state)
         {
+            default:
             case FormState.Initial:
                 // do nothing
                 break;
@@ -97,23 +100,25 @@ export class UserPanelComponent
         }
     }
 
-    TryJoin(team, me)
+    TryJoin(team: string, me: string): void
     {
         this.SetFormState(FormState.Joining);
 
-        this._team.TryJoinTeam(team, me).subscribe(x =>
+        this._team.TryJoinTeam(team, me).subscribe(() =>
         {
-            console.log(x);
+            console.log("Joining successed.");
+
             this.SetFormState(FormState.Joined);
         },
             (err) =>
             {
-                console.log(err);
+                console.log("Joining error: " + err);
+
                 this.SetFormState(FormState.NameTaken);
             });
     }
 
-    Detach()
+    Detach(): void
     {
         this.SetFormState(FormState.Detaching);
 
@@ -122,6 +127,4 @@ export class UserPanelComponent
             this.SetFormState(FormState.Initial);
         });
     }
-
-
 }
