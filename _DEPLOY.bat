@@ -10,7 +10,7 @@ CALL _priv/_FTP_CONNECTION_CONFIG.bat
 
 :: Command
 @ECHO Building...
-::CALL ng build
+CALL ng build
 @ECHO Build done.
 
 @ECHO Sending...

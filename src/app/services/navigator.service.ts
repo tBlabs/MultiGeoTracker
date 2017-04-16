@@ -16,12 +16,15 @@ export class NavigatorService
 
       navigator.geolocation.watchPosition((p: Position) =>
       {
-        console.log("Position changed to " + p.coords.latitude + "/" + p.coords.longitude + " @" + p.timestamp);
-
         let coords: Coordinates = p.coords;
-        this.lastPosition = coords;
 
-        this.position.next(coords);
+        if (this.CoordsCompare(this.lastPosition, coords) == false)
+        { 
+          console.log("Position changed/updated to " + coords.latitude + "/" + coords.longitude + " @" + p.timestamp);
+
+          this.position.next(coords);
+          this.lastPosition = coords;
+        }     
       },
         (e: PositionError) =>
         {
@@ -34,5 +37,18 @@ export class NavigatorService
         });
     }
     else this.position.error("NAVIGATION UNAVALIABLE");
+  }
+
+  private CoordsCompare(a: Coordinates, b: Coordinates): boolean
+  {
+    if ((a != null) && (b != null))
+    {
+      if ((a.latitude == b.latitude) && (a.longitude == b.longitude))
+      {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

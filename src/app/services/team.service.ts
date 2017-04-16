@@ -10,8 +10,8 @@ import { Subscription } from "rxjs/Subscription";
 @Injectable()
 export class TeamService 
 {
-    private team: string;
-    private user: string;
+    private team: string = "";
+    private user: string = "";
     private myKeyInDb: any = null;
 
     private currentTeam: Subscription;
@@ -28,10 +28,10 @@ export class TeamService
 
     private UpdateLocationInDb(position: Coordinates)
     {
-        console.log("Storing user '"+this.user+"' position (" + position.latitude + "/" + position.longitude + ") in db...");
+        if (this.IsLoggedIn())
+        {      
+            console.log("Storing user '" + this.user + "' position (" + position.latitude + "/" + position.longitude + ") in db...");
 
-        if (this.myKeyInDb != null)
-        {
             this._db.database.list("/teams/" + this.team).update(this.myKeyInDb, { latitude: position.latitude, longitude: position.longitude }).then(() =>
             {
                 console.log("User position in db updated.");
@@ -54,19 +54,20 @@ export class TeamService
     {
         let ret = new Subject();
 
-        if (this._gps.lastPosition == null) console.log("LAST POS == NULL");
-
-
-        console.log("Last position: " + JSON.stringify(this._gps.lastPosition));
-
-
-        console.log(`Adding "${ me }" (at ${ this._gps.lastPosition.latitude }/${ this._gps.lastPosition.longitude }) to "${ team }"...`);
-
-        this._db.database.list("/teams/" + team).push({ name: me, latitude: this._gps.lastPosition.latitude, longitude: this._gps.lastPosition.longitude }).then((x) =>
+        if (this._gps.lastPosition == null)
         {
-            console.log(`Added with key "${ x.key }".`);
-            ret.next(x.key);
-        });
+            console.log("POSITION IS UNKNOWN YET");
+        }
+        else
+        {
+            console.log(`Adding "${ me }" (at ${ this._gps.lastPosition.latitude }/${ this._gps.lastPosition.longitude }) to "${ team }"...`);
+ 
+            this._db.database.list("/teams/" + team).push({ name: me, latitude: this._gps.lastPosition.latitude, longitude: this._gps.lastPosition.longitude }).then((x) =>
+            {
+                console.log(`Added with key "${ x.key }".`);
+                ret.next(x.key);
+            });
+        }
 
         return ret;
     }
@@ -131,6 +132,7 @@ export class TeamService
 
         this._db.database.list("/teams/" + this.team).remove(this.myKeyInDb).then(() =>
         {
+            this.myKeyInDb = null;
             ret.next("DETACHED");
         })
 

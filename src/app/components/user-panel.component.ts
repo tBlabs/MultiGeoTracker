@@ -30,7 +30,8 @@ enum FormState
               [disabled]="userInputDisable" 
               [class.err]="userInputError" 
               placeholder="Your initials" 
-              maxlength="2">
+              maxlength="2"
+              required="required">
          
        <button *ngIf="joinButtonVisable" 
                (click)="TryJoin(team.value, me.value)">
