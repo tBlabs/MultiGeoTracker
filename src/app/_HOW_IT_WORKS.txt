@@ -1,6 +1,6 @@
 # Program flow
 
-- Components comunicate throug team.service
+- Components comunicate through team.service
 
 
 # Deploy
